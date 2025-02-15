@@ -28,3 +28,20 @@ jobs:
       # Runs a single command using the runners shell
       - name: Moving in to terraform folder
         run: cd terraform
+      # Download terraform 
+      - name: Download Terraform in github VM
+        run: sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+        run: wget -O- https://apt.releases.hashicorp.com/gpg | \
+             gpg --dearmor | \
+             sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+        run: gpg --no-default-keyring \
+             --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+             --fingerprint
+        run: echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \  
+             https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+             sudo tee /etc/apt/sources.list.d/hashicorp.list
+        run: sudo apt update
+        run: sudo apt-get install terraform
+
+        run: terraform init 
+        run: terraform apply --auto-approve
